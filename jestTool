@@ -1,0 +1,130 @@
+///table
+///
+///
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import Vuetify from 'vuetify';
+import TooltipComponent from '@/components/TooltipComponent.vue'; // Adjust the path as necessary
+
+describe('TooltipComponent.vue', () => {
+  let vuetify;
+
+  it('renders the tooltip correctly', () => {
+    const localVue = createLocalVue();
+    vuetify = new Vuetify();
+    const wrapper = shallowMount(TooltipComponent, {
+      localVue,
+      vuetify,
+      stubs: ['v-tooltip'], // Stub the v-tooltip component
+    });
+
+    expect(wrapper.exists()).toBe(true);
+    const tooltip = wrapper.find('[data-test="tooltip"]'); // Use a data-test attribute for easier selection
+    expect(tooltip.exists()).toBe(true);
+  });
+
+  it('displays the correct tooltip text', async () => {
+    const localVue = createLocalVue();
+    vuetify = new Vuetify();
+    const wrapper = shallowMount(TooltipComponent, {
+      localVue,
+      vuetify,
+      stubs: ['v-tooltip'], // Stub the v-tooltip component
+    });
+
+    const tooltip = wrapper.find('[data-test="tooltip"]');
+    await tooltip.trigger('mouseenter'); // Simulate mouse enter to show the tooltip
+    expect(tooltip.attributes('title')).toBe('Expected Tooltip Text'); // Replace with your expected text
+  });
+
+  it('hides the tooltip on mouse leave', async () => {
+    const localVue = createLocalVue();
+    vuetify = new Vuetify();
+    const wrapper = shallowMount(TooltipComponent, {
+      localVue,
+      vuetify,
+      stubs: ['v-tooltip'], // Stub the v-tooltip component
+    });
+
+    const tooltip = wrapper.find('[data-test="tooltip"]');
+    await tooltip.trigger('mouseenter'); // Show the tooltip
+    await tooltip.trigger('mouseleave'); // Hide the tooltip
+    expect(tooltip.attributes('title')).toBeUndefined(); // Check that the tooltip is hidden
+  });
+});
+
+
+
+///list
+///
+///
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import Vuetify from 'vuetify';
+import TooltipIntervalExample from '@/components/TooltipIntervalExample.vue'; // Adjust the path as necessary
+
+describe('TooltipIntervalExample.vue', () => {
+  let vuetify;
+
+  it('renders the component correctly', () => {
+    const localVue = createLocalVue();
+    vuetify = new Vuetify();
+    const wrapper = shallowMount(TooltipIntervalExample, {
+      localVue,
+      vuetify,
+      stubs: ['v-tooltip'], // Stub the v-tooltip component
+    });
+
+    expect(wrapper.exists()).toBe(true);
+    expect(wrapper.findAll('span.text-h6').length).toBe(6); // Check if there are 6 words rendered
+  });
+
+  it('shows the correct tooltip for the current word', async () => {
+    const localVue = createLocalVue();
+    vuetify = new Vuetify();
+    const wrapper = shallowMount(TooltipIntervalExample, {
+      localVue,
+      vuetify,
+      stubs: ['v-tooltip'], // Stub the v-tooltip component
+    });
+
+    // Simulate showing the tooltip for the first word
+    wrapper.vm.tooltipVisible[0] = true; // Manually set the first tooltip to visible
+    await wrapper.vm.$nextTick(); // Wait for the DOM to update
+
+    const tooltip = wrapper.find('span[title]'); // Find the tooltip
+    expect(tooltip.exists()).toBe(true);
+    expect(tooltip.text()).toBe('This is a tooltip for "Apple"!'); // Check the tooltip text
+  });
+
+  it('cycles through tooltips every 3 seconds', async () => {
+    jest.useFakeTimers(); // Use fake timers for testing setInterval
+    const localVue = createLocalVue();
+    vuetify = new Vuetify();
+    const wrapper = shallowMount(TooltipIntervalExample, {
+      localVue,
+      vuetify,
+      stubs: ['v-tooltip'], // Stub the v-tooltip component
+    });
+
+    // Initially, the first tooltip should be visible
+    wrapper.vm.tooltipVisible[0] = true;
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.tooltipVisible[0]).toBe(true); // First tooltip should be visible
+
+    // Fast-forward time by 3 seconds
+    jest.advanceTimersByTime(3000);
+    await wrapper.vm.$nextTick(); // Wait for the DOM to update
+
+    expect(wrapper.vm.tooltipVisible[0]).toBe(false); // First tooltip should be hidden
+    expect(wrapper.vm.tooltipVisible[1]).toBe(true); // Second tooltip should be visible
+
+    // Fast-forward time by another 3 seconds
+    jest.advanceTimersByTime(3000);
+    await wrapper.vm.$nextTick(); // Wait for the DOM to update
+
+    expect(wrapper.vm.tooltipVisible[1]).toBe(false); // Second tooltip should be hidden
+    expect(wrapper.vm.tooltipVisible[2]).toBe(true); // Third tooltip should be visible
+
+    jest.useRealTimers(); // Restore real timers
+  });
+});
