@@ -1,57 +1,67 @@
 <template>
-  <v-container>
-    <v-data-table
-      :headers="headers"
-      :items="items"
-      item-key="id"
-      hide-default-footer
-    >
-      <template v-slot:item="{ item, index }">
-        <tr :class="getRowClass(index)">
-          <td>{{ item.name }}</td>
-          <td>{{ item.age }}</td>
-          <td>{{ item.city }}</td>
-        </tr>
-      </template>
-    </v-data-table>
-  </v-container>
+  <v-app>
+    <v-container>
+      <v-table>
+        <thead>
+          <tr>
+            <th>Fruits</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in items" :key="index">
+            <td>
+              <v-tooltip v-model="tooltipVisible[index]" location="top">
+                <template v-slot:activator="{ props }">
+                  <span v-bind="props" class="ellipsis">
+                    {{ item.word }}
+                  </span>
+                </template>
+                <span>This is a tooltip for "{{ item.word }}"!</span>
+              </v-tooltip>
+            </td>
+            <td>{{ item.quantity }}</td>
+          </tr>
+        </tbody>
+      </v-table>
+    </v-container>
+  </v-app>
 </template>
-
 <script>
 export default {
+  name: 'TooltipTableExample',
   data() {
     return {
-      headers: [
-        { text: 'Name', value: 'name' },
-        { text: 'Age', value: 'age' },
-        { text: 'City', value: 'city' },
-      ],
       items: [
-        { id: 1, name: 'John', age: 30, city: 'New York' },
-        { id: 2, name: 'Jane', age: 25, city: 'Los Angeles' },
-        { id: 3, name: 'Mike', age: 35, city: 'Chicago' },
-        { id: 4, name: 'Sara', age: 28, city: 'Miami' },
-        { id: 5, name: 'Tom', age: 32, city: 'Seattle' },
+        { word: 'Apple', quantity: 10 },
+        { word: 'Banana', quantity: 20 },
+        { word: 'Cherry', quantity: 15 },
+        { word: 'Date', quantity: 5 },
+        { word: 'Elderberry', quantity: 8 },
+        { word: 'A very long word that should be truncated with an ellipsis', quantity: 12 },
       ],
-    }
+      tooltipVisible: Array(6).fill(false), // Adjust the size based on the number of items
+      currentWordIndex: 0,
+    };
   },
-  methods: {
-    getRowClass(index) {
-      return {
-        'even-row': index % 2 === 0,
-        'odd-row': index % 2 !== 0,
-      };
-    },
+  mounted() {
+    setInterval(() => {
+      // Hide the current tooltip
+      this.tooltipVisible[this.currentWordIndex] = false;
+      // Move to the next word
+      this.currentWordIndex = (this.currentWordIndex + 1) % this.items.length;
+      // Show the tooltip for the new current word
+      this.tooltipVisible[this.currentWordIndex] = true;
+    }, 3000); // Change tooltip every 3 seconds
   },
-}
+};
 </script>
-
 <style scoped>
-.even-row {
-  background-color: #f5f5f5; /* Light gray */
-}
-
-.odd-row {
-  background-color: #ffffff; /* White */
+.ellipsis {
+  display: inline-block; /* Required for text-overflow to work */
+  max-width: 150px; /* Set a max width for the text */
+  overflow: hidden; /* Hide overflow */
+  white-space: nowrap; /* Prevent text from wrapping */
+  text-overflow: ellipsis; /* Show ellipsis (...) */
 }
 </style>
