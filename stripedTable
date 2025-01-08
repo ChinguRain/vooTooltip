@@ -7,9 +7,7 @@
       hide-default-footer
     >
       <template v-slot:item="{ item, index }">
-        <tr
-          :style="{ backgroundColor: index % 2 === 0 ? '#f5f5f5' : '#ffffff' }"
-        >
+        <tr :class="getRowClass(index)">
           <td class="truncate">{{ item.name }}</td>
           <td class="truncate">{{ item.age }}</td>
           <td class="truncate">{{ item.city }}</td>
@@ -20,31 +18,47 @@
 </template>
 
 <script>
-  export default {
-    data() {
+export default {
+  data() {
+    return {
+      headers: [
+        { text: 'Name', value: 'name' },
+        { text: 'Age', value: 'age' },
+        { text: 'City', value: 'city' },
+      ],
+      items: [
+        { id: 1, name: 'John', age: 30, city: 'New Yorwwwwwwwwwk' },
+        { id: 2, name: 'Jane', age: 25, city: 'Los Angelewwwwws' },
+        { id: 3, name: 'Mike', age: 35, city: 'Chicawwwwwwwwwwwgo' },
+        { id: 4, name: 'Sara', age: 28, city: 'Miami' },
+        { id: 5, name: 'Tom', age: 32, city: 'Seattle' },
+      ],
+    }
+  },
+  methods: {
+    getRowClass(index) {
       return {
-        headers: [
-          { text: 'Name', value: 'name' },
-          { text: 'Age', value: 'age' },
-          { text: 'City', value: 'city' },
-        ],
-        items: [
-          { id: 1, name: 'John', age: 30, city: 'New York' },
-          { id: 2, name: 'Jane', age: 25, city: 'Los Angeleerwws' },
-          { id: 3, name: 'Mike', age: 35, city: 'Chicago' },
-          { id: 4, name: 'Sara', age: 28, city: 'Miami' },
-          { id: 5, name: 'Tom', age: 32, city: 'Seattle' },
-        ],
+        'even-row': index % 2 === 0,
+        'odd-row': index % 2 !== 0,
       }
     },
-  }
+  },
+}
 </script>
 
 <style scoped>
-  .truncate {
-    max-width: 100px; /* Set a max width for the cell */
-    overflow: hidden; /* Hide overflow */
-    text-overflow: ellipsis; /* Show ellipsis */
-    white-space: nowrap; /* Prevent text from wrapping */
-  }
+.even-row {
+  background-color: #f5f5f5; /* Light gray */
+}
+
+.odd-row {
+  background-color: #ffffff; /* White */
+}
+
+.truncate {
+  max-width: 100px; /* Set a max width for the cell */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Show ellipsis */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
 </style>
