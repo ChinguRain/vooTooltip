@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-container>
-      <v-table>
+      <v-data-table :items="items" item-key="id" hide-default-footer>
         <thead>
           <tr>
             <th>Fruits</th>
@@ -9,13 +9,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in items" :key="index">
+          <tr
+            v-for="(item, index) in items"
+            :key="index"
+            :class="getRowClass(index)"
+          >
             <td>
               <v-tooltip v-model="tooltipVisible[index]" location="top">
                 <template v-slot:activator="{ props }">
-                  <span v-bind="props" class="ellipsis">
-                    {{ item.word }}
-                  </span>
+                  <span v-bind="props" class="ellipsis"> {{ item.word }} </span>
                 </template>
                 <span>This is a tooltip for "{{ item.word }}"!</span>
               </v-tooltip>
@@ -23,45 +25,61 @@
             <td>{{ item.quantity }}</td>
           </tr>
         </tbody>
-      </v-table>
+      </v-data-table>
     </v-container>
   </v-app>
 </template>
 <script>
-export default {
-  name: 'TooltipTableExample',
-  data() {
-    return {
-      items: [
-        { word: 'Apple', quantity: 10 },
-        { word: 'Banana', quantity: 20 },
-        { word: 'Cherry', quantity: 15 },
-        { word: 'Date', quantity: 5 },
-        { word: 'Elderberry', quantity: 8 },
-        { word: 'A very long word that should be truncated with an ellipsis', quantity: 12 },
-      ],
-      tooltipVisible: Array(6).fill(false), // Adjust the size based on the number of items
-      currentWordIndex: 0,
-    };
-  },
-  mounted() {
-    setInterval(() => {
-      // Hide the current tooltip
-      this.tooltipVisible[this.currentWordIndex] = false;
-      // Move to the next word
-      this.currentWordIndex = (this.currentWordIndex + 1) % this.items.length;
-      // Show the tooltip for the new current word
-      this.tooltipVisible[this.currentWordIndex] = true;
-    }, 3000); // Change tooltip every 3 seconds
-  },
-};
+  export default {
+    name: 'TooltipTableExample',
+    data() {
+      return {
+        items: [
+          { word: 'Apple', quantity: 10 },
+          { word: 'Banana', quantity: 20 },
+          { word: 'Cherry', quantity: 15 },
+          { word: 'Date', quantity: 5 },
+          { word: 'Elderberry', quantity: 8 },
+          {
+            word: 'A very long word that should be truncated with an ellipsis',
+            quantity: 12,
+          },
+        ],
+        tooltipVisible: Array(6).fill(false), // Adjust the size based on the number of items
+        currentWordIndex: 0,
+      }
+    },
+    mounted() {
+      setInterval(() => {
+        // Hide the current tooltip
+        this.tooltipVisible[this.currentWordIndex] = false // Move to the next word
+        this.currentWordIndex = (this.currentWordIndex + 1) % this.items.length // Show the tooltip for the new current word
+        this.tooltipVisible[this.currentWordIndex] = true
+      }, 3000) // Change tooltip every 3 seconds
+    },
+    methods: {
+      getRowClass(index) {
+        return {
+          'even-row': index % 2 === 0,
+          'odd-row': index % 2 !== 0,
+        }
+      },
+    },
+  }
 </script>
 <style scoped>
-.ellipsis {
-  display: inline-block; /* Required for text-overflow to work */
-  max-width: 150px; /* Set a max width for the text */
-  overflow: hidden; /* Hide overflow */
-  white-space: nowrap; /* Prevent text from wrapping */
-  text-overflow: ellipsis; /* Show ellipsis (...) */
-}
+  .ellipsis {
+    display: inline-block; /* Required for text-overflow to work */
+    max-width: 150px; /* Set a max width for the text */
+    overflow: hidden; /* Hide overflow */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-overflow: ellipsis; /* Show ellipsis (...) */
+  }
+  .even-row {
+    background-color: #f5f5f5; /* Light gray */
+  }
+
+  .odd-row {
+    background-color: #ffffff; /* White */
+  }
 </style>
