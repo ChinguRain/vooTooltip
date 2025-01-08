@@ -1,0 +1,80 @@
+<template>
+  <v-app>
+    <v-container>
+      <v-list>
+        <v-list-item v-for="(word, index) in words" :key="index">
+          <v-tooltip v-model="tooltipVisible[index]" location="end">
+            <template v-slot:activator="{ props }">
+              <span v-bind="props" class="text-h6 ellipsis"> {{ word }} </span>
+            </template>
+            <span>This is a tooltip for "{{ word }}"!</span>
+          </v-tooltip>
+        </v-list-item>
+      </v-list>
+    </v-container>
+  </v-app>
+</template>
+
+<script>
+export default {
+  name: 'TooltipIntervalExample',
+  data() {
+    return {
+      words: [
+        'Apple',
+        'Banana',
+        'Cherry',
+        'Date',
+        'Elderberry',
+        'A very long word that should be truncated with an ellipsis',
+      ],
+      tooltipVisible: Array(6).fill(false), // Adjust the size based on the number of words
+      currentWordIndex: 0,
+    }
+  },
+  computed: {
+    isSmallScreen() {
+      return window.innerWidth < 600; // Adjust the breakpoint as needed
+    }
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize);
+    this.startTooltipInterval();
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.handleResize);
+  },
+  methods: {
+    handleResize() {
+      // Update tooltip visibility based on screen size
+      if (!this.isSmallScreen) {
+        this.tooltipVisible.fill(false); // Hide all tooltips on larger screens
+      }
+    },
+    startTooltipInterval() {
+      setInterval(() => {
+        // Hide the current tooltip
+        this.tooltipVisible[this.currentWordIndex] = false;
+
+        // Move to the next word
+        this.currentWordIndex = (this.currentWordIndex + 1) % this.words.length;
+
+        // Show the tooltip for the new current word only if on small screen
+        if (this.isSmallScreen) {
+          this.tooltipVisible[this.currentWordIndex] = true;
+        }
+      }, 3000); // Change tooltip every 3 seconds
+    }
+  }
+}
+</script>
+
+<style scoped>
+.ellipsis {
+  display: inline-block; /* Required for text-overflow to work */
+  max-width: 150px; /* Set a max width for the text */
+  overflow: hidden; /* Hide overflow */
+  white-space: nowrap; /* Prevent text from wrapping */
+  text-overflow: ellipsis; /* Show ellipsis (...) */
+}
+</style>
