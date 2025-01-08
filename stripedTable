@@ -1,50 +1,5 @@
 <template>
   <v-container>
-    <v-data-table :headers="headers" :items="items" item-key="id" hide-default-footer >
-      <template v-slot:item="{ item, index }">
-        <tr
-          :style="{ backgroundColor: index % 2 === 0 ? '#f5f5f5' : '#ffffff' }"
-        >
-          <td>{{ item.name }}</td>
-          <td>{{ item.age }}</td>
-          <td>{{ item.city }}</td>
-        </tr>
-      </template>
-    </v-data-table>
-  </v-container>
-</template>
-
-<script>
-  export default {
-    data() {
-      return {
-        headers: [
-          { text: 'Name', value: 'name' },
-          { text: 'Age', value: 'age' },
-          { text: 'City', value: 'city' },
-        ],
-        items: [
-          { id: 1, name: 'John', age: 30, city: 'New York' },
-          { id: 2, name: 'Jane', age: 25, city: 'Los Angeles' },
-          { id: 3, name: 'Mike', age: 35, city: 'Chicago' },
-          { id: 4, name: 'Sara', age: 28, city: 'Miami' },
-          { id: 5, name: 'Tom', age: 32, city: 'Seattle' },
-        ],
-      }
-    },
-  }
-</script>
-
-<style scoped>
-  /* Optional: Add any additional styles here */
-</style>
-
-
-or 
-
-
-<template>
-  <v-container>
     <v-data-table
       :headers="headers"
       :items="items"
@@ -52,10 +7,12 @@ or
       hide-default-footer
     >
       <template v-slot:item="{ item, index }">
-        <tr :class="getRowClass(index)">
-          <td>{{ item.name }}</td>
-          <td>{{ item.age }}</td>
-          <td>{{ item.city }}</td>
+        <tr
+          :style="{ backgroundColor: index % 2 === 0 ? '#f5f5f5' : '#ffffff' }"
+        >
+          <td class="truncate">{{ item.name }}</td>
+          <td class="truncate">{{ item.age }}</td>
+          <td class="truncate">{{ item.city }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -73,31 +30,21 @@ or
         ],
         items: [
           { id: 1, name: 'John', age: 30, city: 'New York' },
-          { id: 2, name: 'Jane', age: 25, city: 'Los Angeles' },
+          { id: 2, name: 'Jane', age: 25, city: 'Los Angeleerwws' },
           { id: 3, name: 'Mike', age: 35, city: 'Chicago' },
           { id: 4, name: 'Sara', age: 28, city: 'Miami' },
           { id: 5, name: 'Tom', age: 32, city: 'Seattle' },
         ],
       }
     },
-    methods: {
-      getRowClass(index) {
-        return {
-          'even-row': index % 2 === 0,
-          'odd-row': index % 2 !== 0,
-        }
-      },
-    },
   }
 </script>
 
 <style scoped>
-  .even-row {
-    background-color: #f5f5f5; /* Light gray */
-  }
-
-  .odd-row {
-    background-color: #ffffff; /* White */
+  .truncate {
+    max-width: 100px; /* Set a max width for the cell */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Show ellipsis */
+    white-space: nowrap; /* Prevent text from wrapping */
   }
 </style>
-
